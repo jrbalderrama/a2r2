@@ -21,16 +21,15 @@ python3.8 -m venv ${PATH}/venv-a2r2
 source ${PATH}/venv-a2r2/bin/activate 
 # install the dependency management tool
 pip install poetry
-# clone the project
-git clone https://github.com/jrbalderrama/a2r2.git 
-cd a2r2
+# clone the project and enter to the repo dir
+git clone https://github.com/jrbalderrama/a2r2.git a2r2 && cd $_
 # install dependencies on the environment
 poetry install
 ```
 
 ## Run
 The project is organized in self-contained Jupyter notebooks. These are
-located in the `notebooks` directory of the project. There are two ways 
+located in the `notebooks` directory of the project. There are two ways
 to run them:
 
 - On [colab](https://colab.research.google.com/), click on the links of
