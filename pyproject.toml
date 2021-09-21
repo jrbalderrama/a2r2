@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "synthetic"
+name = "a2r2"
 version = "0.1.0"
-description = "SDV data generator for RUDI workshop"
+description = "Atelier d'Anonymisation - Les Rencontres RUDI 2021"
 authors = ["jrbalderrama <jrbalderrama@users.noreply.github.com>"]
-license = "MIT License"
+license = "CC0-1.0"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.9"
