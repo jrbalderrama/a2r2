@@ -127,3 +127,15 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Poetry
+poetry.lock
+
+# Parquet datasets
+*.parquet
+
+# direnv configuration
+.envrc
+
+# VSCode IDE
+.vscode/
