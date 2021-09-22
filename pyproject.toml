@@ -24,6 +24,7 @@ dark = "^0.7.1"
 ipykernel = "^6.4.1"
 mypy = "^0.910"
 pytest = "^6.2.5"
+blackcellmagic = "^0.0.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
