@@ -42,3 +42,12 @@ to run them:
   ```bash
   jupyter notebook
   ```
+
+In fact, there is a hybrid way to execute the notebooks. On *colab* you
+can choose "Connect to local runtime" from the `Connect` toolbar.
+To ensure the connection to a local Jupyter server, you have to activate
+the appropiate extension:
+
+```bash
+jupyter serverextension enable --py jupyter_http_over_ws
+```
