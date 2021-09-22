@@ -2,7 +2,11 @@
 name = "a2r2"
 version = "0.1.0"
 description = "Atelier d'Anonymisation - Les Rencontres RUDI 2021"
-authors = ["jrbalderrama <jrbalderrama@users.noreply.github.com>"]
+authors = [
+    "jrbalderrama <jrbalderrama@users.noreply.github.com>",
+    "tristan-allard <tristan.allard@irisa.fr>",
+]
+
 license = "CC0-1.0"
 
 [tool.poetry.dependencies]
