@@ -11,6 +11,13 @@ repository = "https://github.com/jrbalderrama/a2r2"
 readme = "README.md"
 license = "CC0-1.0"
 
+packages = [
+    { include="atelier"},
+]
+
+[tool.poetry.build]
+generate-setup-file = false
+
 [tool.poetry.dependencies]
 python = ">=3.8,<3.9"
 folium = "^0.12.1"
