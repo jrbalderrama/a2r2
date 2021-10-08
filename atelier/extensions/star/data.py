@@ -99,4 +99,4 @@ def count(
     # #dataframe_ = dataframe_.reindex(domain, method=None, fill_value=NA)
     # #dataframe_.replace(0, np.NAN, inplace=True)
     # #display_dataframe(dataframe_)
-    return dataframe_[dataframe_.columns[0]].to_frame(name="count")
+    return dataframe_.iloc[:, 0].to_frame(name="count")

@@ -39,8 +39,8 @@ def timeline_plot_with_annotations(
     delimiters: Sequence[Timestamp],
     holidays: Tuple[Timestamp, Timestamp],
 ) -> None:
-    dmin = dataframe["nombre_etudiant"].values.min()
-    dmax = dataframe["nombre_etudiant"].values.max()
+    dmin = dataframe["students"].values.min()
+    dmax = dataframe["students"].values.max()
     figure = subplots.make_subplots(specs=[[{"secondary_y": True}]])
     for counter, column in enumerate(attributes):
         secondary_y = False if counter % 2 == 0 else True
