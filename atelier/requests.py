@@ -1,5 +1,6 @@
 from typing import Optional, Sequence, Union
 
+import numpy as np
 import pandas as pd
 from pandas import DataFrame, Timestamp
 
@@ -20,24 +21,22 @@ def query(
 
 
 # filter dataset between two timestamps
+# when 'start > end' then return the complement result (negation)
 def between(
     dataframe: DataFrame,
     start: Union[str, Timestamp],
     end: Union[str, Timestamp],
-    complement: bool = False,
+    *,
+    index: str = "departure_time",
 ) -> DataFrame:
     start_ = start if isinstance(start, Timestamp) else Timestamp(start)
     end_ = end if isinstance(end, Timestamp) else Timestamp(end)
-    return (
-        (dataframe.set_index("departure_time").loc[start_:end_].reset_index())
-        if not complement
-        else (
-            dataframe.loc[
-                (dataframe["departure_time"] < start_)
-                | (dataframe["departure_time"] > end_)
-            ]
-        )
-    )
+    mask = (dataframe[index] >= start_) | (dataframe[index] < end_)
+    if start_ > end_:
+        mask = np.invert(mask)
+
+    # dataframe.set_index(index).loc[start_:end_].reset_index()
+    return dataframe.loc[mask]
 
 
 # intersect two datasets with a common attribute ('on')
@@ -66,8 +65,8 @@ def count(
     attribute: str,
     value: Union[str, int, float],
     *,
-    index: str = "departure_time",
     frequency: str = "15T",
+    index: str = "departure_time",
 ) -> DataFrame:
     dataframe_ = (
         dataframe[dataframe[attribute] == value]

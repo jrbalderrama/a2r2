@@ -2,8 +2,7 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
-from pandas import NA, DataFrame, Timestamp
-from pandas._libs.tslibs.timedeltas import Timedelta
+from pandas import NA, DataFrame, Timedelta, Timestamp
 
 
 # bucketize attribute
@@ -41,7 +40,7 @@ def periodic_encode(
     return dataframe.assign(**kwargs).drop(columns=[column])
 
 
-# mark dataset ranges as holidays
+# mark dataset  between range(start, delta) with label+value
 def label_between(
     dataframe: DataFrame,
     timestamp: Timestamp,

@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import pandas as pd
 from pandas import DataFrame, Timedelta
@@ -10,8 +10,9 @@ def merge_dataframes(
     right: DataFrame,
     *,
     how: str = "outer",
+    fillna: bool = True,
+    fillna_value: Union[str, float, int, bool] = 0,
 ) -> DataFrame:
-
     left_max = left.index.max()
     right_max = right.index.max()
     farest = right_max if right_max <= left_max else left_max
@@ -29,7 +30,9 @@ def merge_dataframes(
     )
 
     # fill empty values with zeroes
-    dataframe = dataframe.fillna(0)
+    if fillna:
+        dataframe = dataframe.fillna(fillna_value)
+
     return dataframe
 
 
@@ -41,3 +44,54 @@ def split_dataframe(
     y = dataframe[[target]]
     X = dataframe.drop(columns=[target])
     return X, y
+
+
+# aggregate dataframe wrapper
+## if attribute is set select only rows with 'value' of the 'attribute' col
+def aggregate_dataframe(
+    dataframe: DataFrame,
+    *,
+    by: Union[str, List[str]],
+    agg: Union[str, Callable, Dict[str, Union[str, Callable]]],
+    attribute: Optional[str] = None,
+    value: Optional[Union[str, List[str]]] = None,
+) -> DataFrame:
+    dataframe_ = dataframe.copy()
+    if attribute and value:
+        values = [value] if isinstance(value, str) else value
+        dataframe_ = dataframe_[dataframe_[attribute].isin(values)]
+
+    by_ = [by] if isinstance(by, str) else by
+    if attribute:
+        by_.append(attribute)
+
+    # first groupby to keep all times of 'attribute'
+    dataframe_ = dataframe_.groupby(by_).agg(agg).reset_index()
+
+    # # remove weekend information
+    # dataframe_ = dataframe_[dataframe_.index.dayofweek < 5]
+    return dataframe_.groupby(by).aggregate(agg)
+
+
+# shift datetimeindex by delta
+## if attribute is set shift only value associated to it
+def shift_datetime_index(
+    dataframe: DataFrame,
+    timedelta: Timedelta,
+    *,
+    attribute: Optional[str] = None,
+    value: Optional[Union[str, List[str]]] = None,
+) -> DataFrame:
+    dataframe_ = dataframe.copy()
+    dataframe_.reset_index(inplace=True)
+    index = dataframe_.columns[0]
+    if attribute and value:
+        values = [value] if isinstance(value, str) else value
+        for value in values:
+            labels = dataframe_[attribute] == value
+            dataframe_.loc[labels, index] += timedelta
+    else:
+        dataframe_.loc[:, index] += timedelta
+
+    dataframe_.set_index(index, inplace=True)
+    return dataframe_
