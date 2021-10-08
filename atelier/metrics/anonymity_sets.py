@@ -4,7 +4,7 @@ from typing import List, Optional
 from pandas import DataFrame, Series
 
 
-def anoymity_set(
+def anoymity_sets(
     dataframe: DataFrame,
     subset: Optional[List[str]] = None,
     reindex: bool = False,
@@ -16,11 +16,11 @@ def anoymity_set(
         return serie.reindex(domain, fill_value=0)
 
     multiplicity = dataframe.value_counts(subset=subset)
-    _anonimity_set = multiplicity.value_counts().sort_index()
+    _anonimity_sets = multiplicity.value_counts().sort_index()
     if reindex:
-        _anonimity_set = reset_index(_anonimity_set)
+        _anonimity_sets = reset_index(_anonimity_sets)
 
-    return _anonimity_set
+    return _anonimity_sets
 
 
 # compute the anonymity set of a 'formated' dataframe
@@ -53,9 +53,9 @@ def get_anonymity_sets(
 
     subset_ = None if not subset else subset
     dataframe_ = get_distinct(dataframe, subset_, distinct)
-    anonymity_sets = anoymity_set(dataframe_, subset_, reindex)
+    _anonymity_sets = anoymity_sets(dataframe_, subset_, reindex)
     return (
-        anonymity_sets.to_frame()
+        _anonymity_sets.to_frame()
         .reset_index()
         .rename(
             {

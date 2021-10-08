@@ -5,6 +5,22 @@ import pandas as pd
 from pandas import DataFrame, Timestamp
 
 
+# drop geospatial attributes from dataset
+def tidy_dataframe(
+    dataframe: DataFrame,
+) -> DataFrame:
+    return dataframe[
+        [
+            "departure_time",
+            "id",
+            "stop_name",
+            "route_short_name",
+            "stop_id",
+            "direction_id",
+        ]
+    ].copy()
+
+
 # query the dataset by attribute and value
 def query(
     dataframe: DataFrame,
