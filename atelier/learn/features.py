@@ -48,9 +48,10 @@ def label_between(
     *,
     label: str,
     value: Union[int, str, float, bool],
+    nan_label_value=NA,
 ) -> DataFrame:
     dataframe_ = dataframe.copy()
-    dataframe_[label] = NA
+    dataframe_[label] = nan_label_value
     timestamp_ = timestamp + timedelta
     labels = (dataframe_.index >= timestamp) & (dataframe_.index < timestamp_)
     dataframe_.loc[labels, label] = value

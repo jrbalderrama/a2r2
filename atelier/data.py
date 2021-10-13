@@ -1,6 +1,7 @@
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import pandas as pd
+from numpy.lib.function_base import disp
 from pandas import DataFrame, Timedelta
 
 
@@ -40,9 +41,13 @@ def merge_dataframes(
 def split_dataframe(
     dataframe: DataFrame,
     target: str,
+    reset_index: bool = False,
 ) -> Tuple[DataFrame, DataFrame]:
     y = dataframe[[target]]
     X = dataframe.drop(columns=[target])
+    if reset_index:
+        X = X.reset_index()
+
     return X, y
 
 
@@ -55,18 +60,20 @@ def aggregate_dataframe(
     agg: Union[str, Callable, Dict[str, Union[str, Callable]]],
     attribute: Optional[str] = None,
     value: Optional[Union[str, List[str]]] = None,
+    keep_index: bool = True,
 ) -> DataFrame:
     dataframe_ = dataframe.copy()
     if attribute and value:
         values = [value] if isinstance(value, str) else value
         dataframe_ = dataframe_[dataframe_[attribute].isin(values)]
 
-    by_ = [by] if isinstance(by, str) else by
-    if attribute:
+    # TODO fin reindex() method
+    if attribute and keep_index:
+        by_ = [by] if isinstance(by, str) else by
         by_.append(attribute)
 
-    # first groupby to keep all times of 'attribute'
-    dataframe_ = dataframe_.groupby(by_).agg(agg).reset_index()
+        # first groupby to keep all times of 'attribute'
+        dataframe_ = dataframe_.groupby(by_).agg(agg).reset_index()
 
     # # remove weekend information
     # dataframe_ = dataframe_[dataframe_.index.dayofweek < 5]

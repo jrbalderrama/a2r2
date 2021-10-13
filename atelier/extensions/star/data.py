@@ -1,8 +1,45 @@
-from typing import Optional, Sequence, Union
+from typing import List, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
-from pandas import DataFrame, Timestamp
+from pandas import DataFrame, DatetimeIndex, Timedelta, Timestamp
+
+from ... import data
+from ...learn import preprocessing
+
+
+def split_merged_dataframe_with_shift_time(
+    buses: DataFrame,
+    classes: DataFrame,
+    start_test: Timestamp,
+    holidays: DatetimeIndex,
+    *,
+    backgrounds: Optional[Union[str, List[str]]],
+    minutes: int,
+) -> DataFrame:
+    minutes = Timedelta(minutes, unit="T")
+    staggered_classes = data.shift_datetime_index(
+        classes,
+        minutes,
+        attribute="filiere",
+        value=backgrounds,
+    )
+
+    classes_ = data.aggregate_dataframe(
+        staggered_classes,
+        by="fin_cours",
+        agg="sum",
+    ).rename(columns={"nombre_etudiant": "students"})
+
+    dataframe = data.merge_dataframes(classes_, buses)
+    dataframe = preprocessing.timeline_feature_extraction(dataframe, holidays)
+    _, test_dataset = preprocessing.timeline_train_test_split(
+        dataframe,
+        start_test=start_test,
+    )
+
+    X_test, y_test = data.split_dataframe(test_dataset, target="validations")
+    return X_test, y_test
 
 
 # drop geospatial attributes from dataset
@@ -17,6 +54,7 @@ def tidy_dataframe(
             "route_short_name",
             "stop_id",
             "direction_id",
+            "count",
         ]
     ].copy()
 
