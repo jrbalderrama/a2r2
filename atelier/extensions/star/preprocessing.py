@@ -10,6 +10,10 @@ def make_column_transformer() -> ColumnTransformer:
     return compose.make_column_transformer(
         ## current buses dataset is not big enough to 'onehotencode' of 'month'
         (OneHotEncoder(handle_unknown="ignore", dtype=np.int_), ["dayofweek"]),
+        (
+            OneHotEncoder(handle_unknown="ignore", drop="first", dtype=np.int_),
+            ["background"],
+        ),
         (MinMaxScaler(), ["students"]),
         ## "workingday" has no impact (or slighlty neg) in score as 'ordinalencode'
         (OrdinalEncoder(dtype=np.int_), ["holiday"]),

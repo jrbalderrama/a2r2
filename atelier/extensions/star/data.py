@@ -25,14 +25,16 @@ def split_merged_dataframe_with_shift_time(
         value=backgrounds,
     )
 
-    classes_ = data.aggregate_dataframe(
-        staggered_classes,
-        by="fin_cours",
-        agg="sum",
-    ).rename(columns={"nombre_etudiant": "students"})
+    classes_ = staggered_classes.rename(
+        columns={
+            "nombre_etudiant": "students",
+            "filiere": "background",
+        }
+    )
 
     dataframe = data.merge_dataframes(classes_, buses)
     dataframe = preprocessing.timeline_feature_extraction(dataframe, holidays)
+    dataframe.loc[dataframe["background"] == 0, "background"] = "Empty"
     _, test_dataset = preprocessing.timeline_train_test_split(
         dataframe,
         start_test=start_test,
