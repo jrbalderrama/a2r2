@@ -17,6 +17,7 @@ def get_fourier_perturbations(
     attribute: Optional[str] = None,
     value: Optional[Union[str, Sequence[str]]] = None,
     period: Optional[str] = None,
+    random_state: Optional[int] = None,
 ) -> DataFrame:
     dataframe_ = dataframe.copy()
     if attribute and value:
@@ -33,24 +34,28 @@ def get_fourier_perturbations(
 
     samples = DataFrame()
     for n in agg_sizes:
-        subset = dataframe_["id"].drop_duplicates().sample(n).values
+        subset = (
+            dataframe_["id"]
+            .drop_duplicates()
+            .sample(n, random_state=random_state)
+            .values
+        )
         mask = dataframe_["id"].isin(subset)
         sample = dataframe_[mask].reset_index(drop=True)
         sample = sample.assign(n=n).drop("id", axis=1)
         samples = samples.append(sample)
 
     fpas = DataFrame()
-    perturbation_function = functools.partial(
-        rastogi.fourier_perturbation_by_timeframe,
-        period=period,
-    )
-
     perturbation_function = (
-        rastogi.fourier_perturbation
+        functools.partial(
+            rastogi.fourier_perturbation,
+            random_state=random_state,
+        )
         if not period
         else functools.partial(
             rastogi.fourier_perturbation_by_timeframe,
             period=period,
+            random_state=random_state,
         )
     )
 

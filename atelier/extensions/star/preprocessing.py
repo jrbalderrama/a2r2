@@ -9,10 +9,11 @@ from ...privacy import rastogi
 
 
 class FourierPerturbationTransformer(TransformerMixin, BaseEstimator):
-    def __init__(self, budget, coefficients, period=None):
+    def __init__(self, budget, coefficients, period, random_state=None):
         self.budget = budget
         self.coefficients = coefficients
         self.period = period
+        self.random_state = random_state
 
     def fit(self, X, y=None):
         return self
@@ -25,6 +26,7 @@ class FourierPerturbationTransformer(TransformerMixin, BaseEstimator):
             self.budget,
             self.coefficients,
             period=self.period,
+            random_state=self.random_state,
         )
 
 

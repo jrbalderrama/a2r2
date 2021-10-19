@@ -5,19 +5,11 @@ import numpy as np
 from numpy import linalg, ndarray
 from pandas import NA, DataFrame, Series
 
+from . import mechanism
+
 
 # Perturb timeline series with differential privacy
-def fpa(Q: ndarray, δ: float, ε: float, k: int) -> ndarray:
-
-    # define a laplace mechanism for perturbation
-    def lpa(Q: ndarray, δ: float, ε: float) -> ndarray:
-        # differential privacy scale based on the budget
-        λ = δ / ε
-
-        # Laplace mechanism applied to whole serie
-        Z = np.random.laplace(scale=λ, size=Q.size)
-
-        return Q + Z
+def fpa(Q: ndarray, δ: float, ε: float, k: int, random_state=None) -> ndarray:
 
     # discrete Fourier trasform
     F = np.fft.fft(Q)
@@ -26,7 +18,9 @@ def fpa(Q: ndarray, δ: float, ε: float, k: int) -> ndarray:
     F_k = F[:k]
 
     # lpa of F_k
-    Fλ_k = lpa(F_k.real, δ, ε) + 1j * lpa(F_k.imag, δ, ε)
+    Fλ_k = mechanism.lpa(F_k.real, δ, ε, random_state) + (
+        1j * mechanism.lpa(F_k.imag, δ, ε, random_state)
+    )
 
     # Fλ_k with `n - k` zero-padding
     Fλ_n = np.pad(Fλ_k, (0, Q.size - k))
@@ -52,6 +46,8 @@ def fourier_perturbation(
     boundary: float,
     budget: float,
     coefficients: int,
+    *,
+    random_state: Optional[int] = None,
 ) -> Optional[ndarray]:
 
     # calculate the L-norm of a uniform vector of seed values
@@ -67,6 +63,7 @@ def fourier_perturbation(
             sensitivity,
             budget,
             coefficients,
+            random_state=random_state,
         )
 
     return None
@@ -79,6 +76,7 @@ def fourier_perturbation_by_timeframe(
     coefficients: int,
     *,
     period: str = "week",
+    random_state: Optional[int] = None,
 ) -> ndarray:
     def get_period(dataframe: DataFrame, period: str) -> Optional[Series]:
         return {
@@ -98,6 +96,7 @@ def fourier_perturbation_by_timeframe(
             boundary,
             epsilon,
             coefficients,
+            random_state=random_state,
         )
 
         fpas.append(period_fpa)
