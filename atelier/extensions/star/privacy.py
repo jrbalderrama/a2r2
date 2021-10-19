@@ -5,7 +5,7 @@ from typing import Optional, Sequence, Union
 from numpy import ndarray
 from pandas import DataFrame
 
-from ...defenses import rastogi
+from ...privacy import rastogi
 
 
 def get_fourier_perturbations(
