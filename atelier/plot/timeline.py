@@ -152,7 +152,7 @@ def plot_with_annotations(
 # attributes are tuple(truth, prediction) names of dataframe
 def residuals_plot(
     dataframe: DataFrame,
-    attributes: Tuple[str, str] = ("references", "predictions"),
+    attributes: Tuple[str, str],
     *,
     title: Optional[str] = None,
 ) -> None:
