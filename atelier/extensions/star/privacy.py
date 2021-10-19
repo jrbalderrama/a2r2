@@ -2,7 +2,6 @@ import functools
 import itertools
 from typing import Optional, Sequence, Union
 
-from numpy import ndarray
 from pandas import DataFrame
 
 from ...privacy import rastogi
@@ -24,14 +23,14 @@ def get_fourier_perturbations(
         values = [value] if isinstance(value, str) else value
         dataframe_ = dataframe_[dataframe_[attribute].isin(values)]
 
-    # count validations by bus stop (per user and timestamp)
+    # count validations (per user and timestamp)
     dataframe_ = (
         dataframe_.groupby(["id", "departure_time"])
-        .agg({"stop_id": agg})
-        .rename(columns={"stop_id": "validations"})
+        .agg({"count": agg})
+        .rename(columns={"count": "validations"})
         .reset_index()
     )
-    # .count()["stop_id"]# .to_frame(name="validations")
+
     samples = DataFrame()
     for n in agg_sizes:
         subset = dataframe_["id"].drop_duplicates().sample(n).values
@@ -43,7 +42,7 @@ def get_fourier_perturbations(
     fpas = DataFrame()
     perturbation_function = functools.partial(
         rastogi.fourier_perturbation_by_timeframe,
-        period="week",
+        period=period,
     )
 
     perturbation_function = (
