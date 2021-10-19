@@ -1,9 +1,31 @@
 import numpy as np
 from sklearn import compose
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder, OrdinalEncoder
 
 from ...learn import preprocessing
+from ...privacy import rastogi
+
+
+class FourierPerturbationTransformer(TransformerMixin, BaseEstimator):
+    def __init__(self, budget, coefficients, period=None):
+        self.budget = budget
+        self.coefficients = coefficients
+        self.period = period
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        boundary = rastogi.bound(X, "count")
+        return rastogi.fourier_perturbation_by_timeframe(
+            X,
+            boundary,
+            self.budget,
+            self.coefficients,
+            period=self.period,
+        )
 
 
 def make_column_transformer() -> ColumnTransformer:
