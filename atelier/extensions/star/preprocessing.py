@@ -11,7 +11,8 @@ def make_column_transformer() -> ColumnTransformer:
         ## current buses dataset is not big enough to 'onehotencode' of 'month'
         (OneHotEncoder(handle_unknown="ignore", dtype=np.int_), ["dayofweek"]),
         (
-            OneHotEncoder(handle_unknown="ignore", drop="first", dtype=np.int_),
+            # OneHotEncoder(handle_unknown="ignore", drop="first", dtype=np.int_),
+            OrdinalEncoder(dtype=np.int_),
             ["background"],
         ),
         (MinMaxScaler(), ["students"]),

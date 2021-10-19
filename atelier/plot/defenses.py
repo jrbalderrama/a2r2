@@ -1,3 +1,5 @@
+from typing import List
+
 import plotly.express as px
 import plotly.figure_factory as ff
 from pandas import DataFrame
@@ -53,14 +55,17 @@ def facet_plot(
 
 def distributions_plot(
     dataframe: DataFrame,
+    attributes: List[str],
     *,
     curve_type="normal",
 ) -> None:
     dataframe_ = dataframe.copy()
-    dataframe_["noise"] = dataframe_["validations"] - dataframe_["fpa"]
+    noise = dataframe_.loc[:, attributes[0]] - dataframe_.loc[:, attributes[1]]
+    dataframe_ = dataframe_.assign(noise=noise)
+    attributes_ = attributes + ["noise"]
     figure = ff.create_distplot(
-        [dataframe_[c] for c in dataframe_.columns],
-        dataframe_.columns,
+        [dataframe_[c] for c in attributes_],
+        attributes_,
         curve_type=curve_type,
         # bin_size=[3, 3, 3],
     )

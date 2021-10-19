@@ -1,64 +1,25 @@
-from typing import List, Optional, Sequence, Union
+from typing import Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
-from pandas import DataFrame, DatetimeIndex, Timedelta, Timestamp
-
-from ... import data
-from ...learn import preprocessing
+from pandas import DataFrame, Timestamp
 
 
-def split_merged_dataframe_with_shift_time(
-    buses: DataFrame,
-    classes: DataFrame,
-    start_test: Timestamp,
-    holidays: DatetimeIndex,
-    *,
-    backgrounds: Optional[Union[str, List[str]]],
-    minutes: int,
-) -> DataFrame:
-    minutes = Timedelta(minutes, unit="T")
-    staggered_classes = data.shift_datetime_index(
-        classes,
-        minutes,
-        attribute="filiere",
-        value=backgrounds,
-    )
-
-    classes_ = staggered_classes.rename(
-        columns={
-            "nombre_etudiant": "students",
-            "filiere": "background",
-        }
-    )
-
-    dataframe = data.merge_dataframes(classes_, buses)
-    dataframe = preprocessing.timeline_feature_extraction(dataframe, holidays)
-    dataframe.loc[dataframe["background"] == 0, "background"] = "Empty"
-    _, test_dataset = preprocessing.timeline_train_test_split(
-        dataframe,
-        start_test=start_test,
-    )
-
-    X_test, y_test = data.split_dataframe(test_dataset, target="validations")
-    return X_test, y_test
-
-
-# drop geospatial attributes from dataset
 def tidy_dataframe(
     dataframe: DataFrame,
 ) -> DataFrame:
-    return dataframe[
-        [
-            "departure_time",
-            "id",
-            "stop_name",
-            "route_short_name",
-            "stop_id",
-            "direction_id",
-            "count",
-        ]
-    ].copy()
+    dataframe_ = dataframe.copy()
+    columns = [
+        "departure_time",
+        "id",
+        "stop_name",
+        "route_short_name",
+        "direction_id",
+        "stop_id",
+        "count",
+    ]
+
+    return dataframe_[columns]
 
 
 # query the dataset by attribute and value

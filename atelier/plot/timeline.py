@@ -214,8 +214,8 @@ def residuals_plot(
 # zoom on predictions of a predictor and a baseline model with ground truth
 def predictions_interval_plot(
     gt_dataframe: DataFrame,
-    pm_dataframe: DataFrame,
     bl_dataframe: DataFrame,
+    pm_dataframe: DataFrame,
     names: Tuple[str, str, str],
     *,
     title: Optional[str] = None,

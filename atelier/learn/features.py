@@ -56,3 +56,16 @@ def label_between(
     labels = (dataframe_.index >= timestamp) & (dataframe_.index < timestamp_)
     dataframe_.loc[labels, label] = value
     return dataframe_
+
+
+# generate lags (to track interaction throughout time)
+def generate_lags(
+    dataframe: DataFrame,
+    lags: int,
+    column: str,
+) -> DataFrame:
+    dataframe_ = dataframe.copy()
+    for n in range(1, lags + 1):
+        dataframe_[f"{column}_lag_{n}"] = dataframe_[column].shift(n)
+
+    return dataframe_.fillna(0)

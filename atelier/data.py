@@ -1,7 +1,6 @@
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import pandas as pd
-from numpy.lib.function_base import disp
 from pandas import DataFrame, Timedelta
 
 
@@ -67,7 +66,7 @@ def aggregate_dataframe(
         values = [value] if isinstance(value, str) else value
         dataframe_ = dataframe_[dataframe_[attribute].isin(values)]
 
-    # TODO fin reindex() method
+    # TODO fix/check (?) reindex() method
     if attribute and keep_index:
         by_ = [by] if isinstance(by, str) else by
         by_.append(attribute)

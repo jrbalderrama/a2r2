@@ -3,7 +3,7 @@ import itertools
 from typing import Optional, Sequence, Union
 
 from numpy import ndarray
-from pandas import DataFrame, Series
+from pandas import DataFrame
 
 from ...defenses import rastogi
 
@@ -51,7 +51,7 @@ def get_fourier_perturbations(
         if not period
         else functools.partial(
             rastogi.fourier_perturbation_by_timeframe,
-            period="week",
+            period=period,
         )
     )
 
