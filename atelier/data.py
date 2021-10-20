@@ -101,3 +101,25 @@ def shift_datetime_index(
 
     dataframe_.set_index(index, inplace=True)
     return dataframe_
+
+
+def resample_dataframe(
+    dataframe: DataFrame,
+    frequency: Union[Timedelta, str],
+) -> DataFrame:
+    dataframe_ = dataframe.copy()
+
+    # from pandas.tseries import frequencies
+    # frequency = frequencies.to_offset(frequency)
+
+    # dataframe_ = dataframe_.groupby(
+    #     [
+    #         pd.Grouper(
+    #             freq=frequency,
+    #             level=dataframe_.index.name,
+    #             origin="start",
+    #         )
+    #     ]
+    # ).sum()
+
+    return dataframe_.resample(frequency, origin="start").sum()
